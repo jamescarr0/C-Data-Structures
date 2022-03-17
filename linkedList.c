@@ -14,7 +14,6 @@ void insert(LinkedList_t *list, char value) {
         prev = current;
         current = current->next;
     }
-
     prev->next = newNode;
 }
 
@@ -48,17 +47,9 @@ int insertAt(LinkedList_t *list, char value, int index) {
             prev->next = newNode;
         }
     }
-
     return 0;
 }
 
-/**
- * Delete a node containing char value.
- *
- * @param head
- * @param value
- * @return 0 if node is successfully deleted.
- */
 int delete(LinkedList_t *list, char value) {
     node_t *current = list->head;
     node_t *prev;
@@ -99,12 +90,6 @@ void printList(LinkedList_t *list) {
     }
 }
 
-/**
- * isEmpty: Check if a linked list contains nodes or is empty.
- *
- * @param head Head of the linked list.
- * @return 1 if list is empty, 0 if list is not empty.
- */
 int isEmpty(LinkedList_t *list) {
     return list->head == NULL;
 }
@@ -130,10 +115,6 @@ void removeAll(LinkedList_t *list) {
     list->head = NULL;
 }
 
-/**
- * Remove all elements, deallocate all memory including linked list handle.
- * @param list
- */
 void freeList(LinkedList_t *list) {
     removeAll(list);
     free(list);
