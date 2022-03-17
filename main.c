@@ -1,43 +1,53 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "linkedList.h"
 
 int main() {
-    node_t *head = NULL;
+    LinkedList_t *list = malloc(sizeof(LinkedList_t));
+    list->head = 0;
 
-    if(isEmpty(head)) {
+    if(isEmpty(list)) {
         printf("Creating a list..\n");
+        insertHead(list, 'A');
+        insert(list, 'l');
+        insert(list, 'i');
+        insert(list, 's');
+        insert(list, 't');
 
-        insertHead(&head, 'A');
-        insert(&head, 'l');
-        insert(&head, 'i');
-        insert(&head, 's');
-        insert(&head, 't');
+        insertHead(list, 'Z');
+        insertHead(list, 'Z');
     }
 
     printf("Inserting X at position 5..\n");
-    if (insertAt(&head, 'X', 2)) {
+    if (insertAt(list, 'X', 5)) {
         printf("Error: Insertion failed.\n");
     } else {
         printf("Successfully inserted node.\n");
     }
 
     printf("Deleting node containing value X..\n");
-    if (delete(&head, 'X')) {
+    if (delete(list, 'X')) {
         printf("Error: Node not found.\n");
     } else {
         printf("Successfully deleted node.\n");
     }
 
     printf("Removing head node..\n");
-    if (deleteHead(&head)){
+    if (deleteHead(list)){
         printf("Empty list, cannot remove a head with no nodes\n");
     } else {
         printf("Head successfully removed\n");
     }
 
-    printList(head);
+    printList(list);
 
-    printf("Linked list length: %d\n", listLength(head));
+    printf("Linked list length: %d\n", listLength(list));
+
+    removeAll(list);
+
+    printList(list);
+
+    freeList(list);
 
     return 0;
 }

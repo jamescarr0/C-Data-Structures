@@ -10,20 +10,28 @@ typedef struct node_s {
     struct node_s *next;
 } node_t;
 
-void insert(node_t **head, char value);
+typedef struct LinkedList_s {
+    node_t *head;
+} LinkedList_t;
 
-int insertAt(node_t **head, char value, int index);
+void insert(LinkedList_t *list, char value);
 
-void insertHead(node_t **head, char value);
+int insertAt(LinkedList_t *list, char value, int index);
 
-int delete(node_t **head, char value);
+void insertHead(LinkedList_t *list, char value);
 
-int deleteHead(node_t **head);
+int delete(LinkedList_t *list, char value);
 
-int isEmpty(void *head);
+int deleteHead(LinkedList_t *list);
 
-void printList(node_t *head);
+int isEmpty(LinkedList_t *list);
 
-int listLength(node_t *head);
+void printList(LinkedList_t *list);
+
+int listLength(LinkedList_t *list);
+
+void freeList(LinkedList_t *list);
+
+void removeAll(LinkedList_t *list);
 
 #endif //LINKEDLIST_H

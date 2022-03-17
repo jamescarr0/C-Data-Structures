@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-void insert(node_t **head, char value) {
-    node_t *current = *head;
-    node_t *prev;
-    node_t *newNode;
+void insert(LinkedList_t *list, char value) {
+    node_t *current = list->head;
+    node_t *prev, *newNode;
 
     newNode = malloc(sizeof(node_t));
     newNode->data = value;
@@ -19,23 +18,23 @@ void insert(node_t **head, char value) {
     prev->next = newNode;
 }
 
-void insertHead(node_t **head, char value) {
+void insertHead(LinkedList_t *list, char value) {
     node_t *new_node = malloc(sizeof(node_t));
     new_node->data = value;
-    new_node->next = *head;
-    *head = new_node;
+    new_node->next = NULL;
+    if (listLength(list) > 0) new_node->next = list->head;
+    list->head = new_node;
 }
 
-int insertAt(node_t **head, char value, int index) {
+int insertAt(LinkedList_t *list, char value, int index) {
     // Position 0 - Insert a new head.
-    if (index == 0) insertHead(head, value);
+    if (index == 0) insertHead(list, value);
 
     // Insertion error: index exceeds the length of the list.
-    if (index > listLength(*head)) return -1;
+    if (index > listLength(list)) return -1;
 
-    node_t *current = *head;
-    node_t *prev;
-    node_t *newNode;
+    node_t *current = list->head;
+    node_t *prev, *newNode;
     int count = 0;
 
     while (current) {
@@ -60,8 +59,8 @@ int insertAt(node_t **head, char value, int index) {
  * @param value
  * @return 0 if node is successfully deleted.
  */
-int delete(node_t **head, char value) {
-    node_t *current = *head;
+int delete(LinkedList_t *list, char value) {
+    node_t *current = list->head;
     node_t *prev;
 
     while (current) {
@@ -78,19 +77,25 @@ int delete(node_t **head, char value) {
     return -1;
 }
 
-int deleteHead(node_t **head) {
+int deleteHead(LinkedList_t *list) {
     // Cannot remove a head with no nodes / empty list.
-    if (listLength(*head) == 0) return -1;
-    node_t *oldHead = *head;
-    *head = oldHead->next;
+    if (listLength(list) == 0) return -1;
+    node_t *oldHead = list->head;
+    list->head = oldHead->next;
     free(oldHead);
     return 0;
 }
 
-void printList(node_t *head) {
-    while (head) {
-        printf("List data: %c\n", head->data);
-        head = head->next;
+void printList(LinkedList_t *list) {
+    if (isEmpty(list) == 1) {
+        printf("List empty\n");
+        return;
+    }
+
+    node_t *current = list->head;
+    while (current) {
+        printf("List data: %c\n", current->data);
+        current = current->next;
     }
 }
 
@@ -100,13 +105,36 @@ void printList(node_t *head) {
  * @param head Head of the linked list.
  * @return 1 if list is empty, 0 if list is not empty.
  */
-int isEmpty(void *head) { return head == NULL; }
+int isEmpty(LinkedList_t *list) {
+    return list->head == NULL;
+}
 
-int listLength(node_t *head) {
+int listLength(LinkedList_t *list) {
+    node_t *current = list->head;
     int count = 0;
-    while (head) {
+
+    while (current) {
         ++count;
-        head = head->next;
+        current = current->next;
     }
     return count;
+}
+
+void removeAll(LinkedList_t *list) {
+    node_t *next;
+    while (list->head) {
+        next = list->head->next;
+        free(list->head);
+        list->head = next;
+    }
+    list->head = NULL;
+}
+
+/**
+ * Remove all elements, deallocate all memory including linked list handle.
+ * @param list
+ */
+void freeList(LinkedList_t *list) {
+    removeAll(list);
+    free(list);
 }
