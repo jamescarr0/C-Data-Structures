@@ -3,24 +3,22 @@
 #include "linkedList.h"
 
 void insert(LinkedList_t *list, char value) {
-    node_t *current = list->head;
-    node_t *prev, *newNode;
+    // Pointer-to-pointer tracks the ADDRESS of the current node
+    // This (**ptr) pointer is a pointer to the ADDRESS of the current node
+    // De-referencing the pointer (*ptr) gives the ADDRESS of the current node.
+    node_t **indirect = &list->head;
 
-    newNode = malloc(sizeof(node_t));
-    newNode->data = value;
-    newNode->next = NULL;
+    node_t *new_node = _create_node(value);
 
-    while (current) {
-        prev = current;
-        current = current->next;
+    while(*indirect) {
+        indirect = &(*indirect)->next;
     }
-    prev->next = newNode;
+
+    *indirect = new_node;
 }
 
 void insertHead(LinkedList_t *list, char value) {
-    node_t *new_node = malloc(sizeof(node_t));
-    new_node->data = value;
-    new_node->next = NULL;
+    node_t *new_node = _create_node(value);
     if (listLength(list) > 0) new_node->next = list->head;
     list->head = new_node;
 }
@@ -35,14 +33,12 @@ int insertAt(LinkedList_t *list, char value, int index) {
     node_t *current = list->head;
     node_t *prev, *newNode;
     int count = 0;
-
     while (current) {
         prev = current;
         current = current->next;
 
         if (++count == index) {
-            newNode = malloc(sizeof(node_t));
-            newNode->data = value;
+            newNode = _create_node(value);
             newNode->next = current;
             prev->next = newNode;
         }
@@ -95,18 +91,16 @@ int isEmpty(LinkedList_t *list) {
 }
 
 int listLength(LinkedList_t *list) {
-    node_t *current = list->head;
-    int count = 0;
+    return _listLength(list->head);
+}
 
-    while (current) {
-        ++count;
-        current = current->next;
-    }
-    return count;
+int _listLength(node_t *head) {
+    if (!head) return 0;
+    return 1 + _listLength(head->next);
 }
 
 void removeAll(LinkedList_t *list) {
-    node_t *next;
+    node_t *next = NULL;
     while (list->head) {
         next = list->head->next;
         free(list->head);
@@ -118,4 +112,12 @@ void removeAll(LinkedList_t *list) {
 void freeList(LinkedList_t *list) {
     removeAll(list);
     free(list);
+}
+
+/*** Helper Functions ***/
+node_t *_create_node(char value) {
+    node_t *new_node = malloc(sizeof(node_t));
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
 }

@@ -44,6 +44,8 @@ void printList(LinkedList_t *list);
 
 int listLength(LinkedList_t *list);
 
+int _listLength(node_t *head);  // Helper function
+
 /**
  * Remove all elements, deallocate all memory including linked list handle.
  * @param list
@@ -51,5 +53,7 @@ int listLength(LinkedList_t *list);
 void freeList(LinkedList_t *list);
 
 void removeAll(LinkedList_t *list);
+
+node_t *_create_node(char value);
 
 #endif //LINKEDLIST_H

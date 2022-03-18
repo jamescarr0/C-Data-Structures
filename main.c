@@ -2,20 +2,21 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
+int listLength2(LinkedList_t *list);
+
 int main() {
     LinkedList_t *list = malloc(sizeof(LinkedList_t));
     list->head = 0;
 
     if(isEmpty(list)) {
         printf("Creating a list..\n");
-        insertHead(list, 'A');
+        insertHead(list, 'A'); // Will be deleted with delete function later in code.
+        insert(list, 'A');
         insert(list, 'l');
         insert(list, 'i');
         insert(list, 's');
         insert(list, 't');
 
-        insertHead(list, 'Z');
-        insertHead(list, 'Z');
     }
 
     printf("Inserting X at position 5..\n");
