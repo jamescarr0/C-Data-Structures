@@ -13,26 +13,25 @@
 
 void insert(LinkedList_t *list, char value) {
     // Pointer-to-pointer tracks the ADDRESS of the current node
-    node_t **indirect = &list->head;        // Set indirect to address of the head (current) node.
+    node_t **node_ptr = &list->head;        // Set node_ptr to address of the head (current) node.
     node_t *new_node = h_create_node(value);
 
     // Iterate the list until we get to the last pointer.
-    while (*indirect) {
-        indirect = &(*indirect)->next;
+    while (*node_ptr) {
+        node_ptr = &(*node_ptr)->next;
     }
 
     // This is the last pointer in the list which would point to NULL.
     // Assign to pointer the address of our new node.
-    *indirect = new_node;
+    *node_ptr = new_node;
 }
 
 void insert_head(LinkedList_t *list, char value) {
+    node_t **head_ptr = &list->head;
     node_t *new_node = h_create_node(value);
 
-    if (list_length(list) > 0) {
-        new_node->next = list->head;
-    }
-    list->head = new_node;
+    new_node->next = *head_ptr;     // New node points to the head node.
+    *head_ptr = new_node;           // Update the head node pointer to the new nodes address.
 }
 
 int insert_at(LinkedList_t *list, char value, int index) {
@@ -47,13 +46,15 @@ int insert_at(LinkedList_t *list, char value, int index) {
     }
 
     node_t **current = &list->head;
-    for (int i = 0; i < index; ++i) { // Iterate the list until we arrive at the point of insertion.
+
+    // Iterate the list until we arrive at the point of insertion.
+    for (int i = 0; i < index; ++i) {
         current = &(*current)->next;
     }
 
     node_t *node = h_create_node(value);
     node->next = (*current);
-    *(current) = node;
+    *current = node;
 
     return 0;
 }
