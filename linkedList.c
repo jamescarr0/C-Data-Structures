@@ -1,123 +1,147 @@
+/**
+ * Linked List Data Structure.
+ * Based on the Linus Torvalds idea of good taste and elegance.
+ *
+ * Rather than use previous & next, use double pointers and change address by Creating a pointer to pointer
+ * that points to the address of the head/current node of the linked list and updating the address accordingly.
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "linkedList.h"
 
 void insert(LinkedList_t *list, char value) {
     // Pointer-to-pointer tracks the ADDRESS of the current node
-    // This (**ptr) pointer is a pointer to the ADDRESS of the current node
-    // De-referencing the pointer (*ptr) gives the ADDRESS of the current node.
-    node_t **indirect = &list->head;
+    node_t **indirect = &list->head;        // Set indirect to address of the head (current) node.
+    node_t *new_node = h_create_node(value);
 
-    node_t *new_node = _create_node(value);
-
-    while(*indirect) {
+    // Iterate the list until we get to the last pointer.
+    while (*indirect) {
         indirect = &(*indirect)->next;
     }
 
+    // This is the last pointer in the list which would point to NULL.
+    // Assign to pointer the address of our new node.
     *indirect = new_node;
 }
 
-void insertHead(LinkedList_t *list, char value) {
-    node_t *new_node = _create_node(value);
-    if (listLength(list) > 0) new_node->next = list->head;
+void insert_head(LinkedList_t *list, char value) {
+    node_t *new_node = h_create_node(value);
+
+    if (list_length(list) > 0) {
+        new_node->next = list->head;
+    }
     list->head = new_node;
 }
 
-int insertAt(LinkedList_t *list, char value, int index) {
-    // Position 0 - Insert a new head.
-    if (index == 0) insertHead(list, value);
-
-    // Insertion error: index exceeds the length of the list.
-    if (index > listLength(list)) return -1;
-
-    node_t *current = list->head;
-    node_t *prev, *newNode;
-    int count = 0;
-    while (current) {
-        prev = current;
-        current = current->next;
-
-        if (++count == index) {
-            newNode = _create_node(value);
-            newNode->next = current;
-            prev->next = newNode;
-        }
+int insert_at(LinkedList_t *list, char value, int index) {
+    if (index > list_length(list)) { // Index out of bounds.
+        return -1;
     }
+
+    if (index == list_length(list)) { // Index == last item of the list, just insert a new node.
+        insert(list, value);
+    }
+
+    node_t **current = &list->head;
+
+    // Iterate the list until we arrive at the point of insertion.
+    for (int i = 0; i < index; ++i) {
+        current = &(*current)->next;
+    }
+
+    node_t *node;
+    node = h_create_node(value);
+    node->next = (*current);
+    *(current) = node;
+
     return 0;
 }
 
 int delete(LinkedList_t *list, char value) {
-    node_t *current = list->head;
-    node_t *prev;
-
-    while (current) {
-        // Node found, adjust previous and next links and free memory.
-        if (current->data == value) {
-            prev->next = current->next;
-            free(current);
-            return 0;
-        }
-        prev = current;
-        current = current->next;
+    node_t **indirect = &list->head;
+    node_t *node = h_find_node(list, value);
+    if (!node) {
+        return -1;
     }
 
-    return -1;
-}
+    while ((*indirect) != node) {
+        indirect = &(*indirect)->next;
+    }
+    *indirect = node->next;
+    free(node);
 
-int deleteHead(LinkedList_t *list) {
-    // Cannot remove a head with no nodes / empty list.
-    if (listLength(list) == 0) return -1;
-    node_t *oldHead = list->head;
-    list->head = oldHead->next;
-    free(oldHead);
     return 0;
 }
 
-void printList(LinkedList_t *list) {
-    if (isEmpty(list) == 1) {
+int delete_head(LinkedList_t *list) {
+    // Cannot remove a head with no nodes / empty list.
+    if (list_length(list) == 0) {
+        return -1;
+    }
+    node_t *node = list->head;
+    list->head = node->next;
+    free(node);
+    return 0;
+}
+
+void print_list(LinkedList_t *list) {
+    if (is_empty(list)) {
         printf("List empty\n");
         return;
     }
 
     node_t *current = list->head;
+    printf("HEAD -> ");
     while (current) {
-        printf("List data: %c\n", current->data);
+        printf("[ %c ] -> ", current->data);
         current = current->next;
     }
+    printf("NULL\n");
 }
 
-int isEmpty(LinkedList_t *list) {
+int is_empty(LinkedList_t *list) {
     return list->head == NULL;
 }
 
-int listLength(LinkedList_t *list) {
-    return _listLength(list->head);
+int list_length(LinkedList_t *list) {
+    return h_list_length(list->head);
 }
 
-int _listLength(node_t *head) {
-    if (!head) return 0;
-    return 1 + _listLength(head->next);
-}
+void remove_all(LinkedList_t *list) {
+    node_t *node = NULL;
 
-void removeAll(LinkedList_t *list) {
-    node_t *next = NULL;
     while (list->head) {
-        next = list->head->next;
+        node = list->head->next;
         free(list->head);
-        list->head = next;
+        list->head = node;
     }
     list->head = NULL;
 }
 
-void freeList(LinkedList_t *list) {
-    removeAll(list);
+void free_list(LinkedList_t *list) {
+    remove_all(list);
     free(list);
 }
 
 /*** Helper Functions ***/
-node_t *_create_node(char value) {
+int h_list_length(node_t *head) {
+    if (!head) return 0;
+    return 1 + h_list_length(head->next);
+}
+
+node_t *h_create_node(char value) {
     node_t *new_node = malloc(sizeof(node_t));
     new_node->data = value;
     new_node->next = NULL;
     return new_node;
+}
+
+node_t *h_find_node(LinkedList_t *list, char value) {
+    node_t *node = list->head;
+    while (node != NULL && node->data != value) {
+        node = node->next;
+    }
+    return node;
 }

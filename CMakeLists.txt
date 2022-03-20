@@ -3,4 +3,4 @@ project(Linked_List C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Linked_List linkedList.c main.c linkedList.h)
+add_executable(Linked_List linkedList.c DriverCode.c linkedList.h)
