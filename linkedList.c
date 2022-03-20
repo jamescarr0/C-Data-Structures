@@ -36,23 +36,22 @@ void insert_head(LinkedList_t *list, char value) {
 }
 
 int insert_at(LinkedList_t *list, char value, int index) {
-    if (index > list_length(list)) { // Index out of bounds.
+    // Index out of bounds.
+    if (index > list_length(list)) {
         return -1;
     }
 
-    if (index == list_length(list)) { // Index == last item of the list, just insert a new node.
+    // Index == last item of the list, just insert a new node.
+    if (index == list_length(list)) {
         insert(list, value);
     }
 
     node_t **current = &list->head;
-
-    // Iterate the list until we arrive at the point of insertion.
-    for (int i = 0; i < index; ++i) {
+    for (int i = 0; i < index; ++i) { // Iterate the list until we arrive at the point of insertion.
         current = &(*current)->next;
     }
 
-    node_t *node;
-    node = h_create_node(value);
+    node_t *node = h_create_node(value);
     node->next = (*current);
     *(current) = node;
 
@@ -127,17 +126,24 @@ void free_list(LinkedList_t *list) {
 
 /*** Helper Functions ***/
 int h_list_length(node_t *head) {
+    // Recursively count the number of nodes in the list.
     if (!head) return 0;
     return 1 + h_list_length(head->next);
 }
 
+// Malloc a new node and return the pointer.
 node_t *h_create_node(char value) {
     node_t *new_node = malloc(sizeof(node_t));
+    if (!new_node) {
+        printf("Error: Memory allocation failed, terminating.\n");
+        exit(EXIT_FAILURE);
+    }
     new_node->data = value;
     new_node->next = NULL;
     return new_node;
 }
 
+// Find a node entry based on the character value.
 node_t *h_find_node(LinkedList_t *list, char value) {
     node_t *node = list->head;
     while (node != NULL && node->data != value) {
