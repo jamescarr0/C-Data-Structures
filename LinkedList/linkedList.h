@@ -1,3 +1,12 @@
+/**
+ * Linked List Data Structure.
+ * Based on the Linus Torvalds idea of good taste and elegance.
+ *
+ * Rather than use previous & next, use double pointers and change address by Creating a pointer to pointer
+ * that points to the address of the head/current node of the linked list and updating the address accordingly.
+ *
+ */
+
 //
 // Created by James Carr on 17/03/2022.
 //

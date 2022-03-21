@@ -15,25 +15,13 @@ Stack *stack_init() {
 }
 
 void push(Stack *stack, int value) {
-    if (stack->buf_size == stack->length) realloc_stack(stack);
+    if (stack->buf_size == stack->length) grow_stack(stack);
     stack->array[stack->length++] = value;
-}
-
-void realloc_stack(Stack *stack) {
-    int new_size = stack->buf_size * REALLOC_MULTIPLIER;
-
-    int *tmp = realloc(stack->array, new_size * sizeof(*stack->array));
-    if (!tmp) {
-        printf("Memory reallocation failed, terminating.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    stack->buf_size = new_size;
-    stack->array = tmp;
 }
 
 void pop(Stack *stack) {
     stack->array[--stack->length];
+    if (stack->buf_size > (stack->length * 2) + INIT_STACK_SIZE) shrink_stack(stack);
 }
 
 // Return a pointer to the top of the stack.  If the stack is empty return NULL.
@@ -54,4 +42,34 @@ void print_stack(Stack *stack) {
     }
 }
 
-    // TODO: Dealloc memory when stack size has grown to big compared to the number of elements
+void stack_remove_all(Stack *stack) {
+    stack->length = 0;
+    shrink_stack(stack);
+}
+
+void free_stack(Stack *stack) { free(stack); }
+
+void grow_stack(Stack *stack) { realloc_stack(stack, GROW_STACK); }
+
+void shrink_stack(Stack *stack) { realloc_stack(stack, SHRINK_STACK); }
+
+void realloc_stack(Stack *stack, int action) {
+    int new_size;
+
+    if (action == GROW_STACK) {
+        new_size = (stack->buf_size += INIT_STACK_SIZE);
+    }
+
+    if (action == SHRINK_STACK) {
+        new_size = (stack->buf_size = (stack->length + INIT_STACK_SIZE));
+    }
+
+    int *p = realloc(stack->array, new_size * sizeof(int));
+    if (!p) {
+        fprintf(stderr, "Memory reallocation failure");
+        exit(EXIT_FAILURE);
+    }
+
+    stack->buf_size = new_size;
+    stack->array = p;
+}
