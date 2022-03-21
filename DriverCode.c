@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "linkedList.h"
+#include "LinkedList/linkedList.h"
 
 int main() {
     // Create a new linked list.
