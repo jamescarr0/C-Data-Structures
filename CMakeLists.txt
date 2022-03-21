@@ -3,4 +3,4 @@ project(C-Data-Structures C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Linked_List LinkedList/linkedList.c DriverCode.c)
+add_executable(Linked_List LinkedList/linkedList.c DriverCode.c Stack/stack.c Stack/stack.h)
