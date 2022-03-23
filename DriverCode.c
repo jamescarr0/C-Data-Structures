@@ -6,24 +6,39 @@
 #include <stdlib.h>
 #include "LinkedList/linkedList.h"
 #include "Stack/stack.h"
+#include "Queue/queue.h"
 
 int main() {
 
-    Stack *stack = stack_init();
-    for (int i = 0; i < 500; ++i) push(stack, i);
-    for (int i = 0; i < 450; ++i) pop(stack);
-    int top = peek(stack);
-    if(!top) {
-        printf("Stack is empty!\n");
-    } else {
-        printf("Value of top: %d\n", *peek(stack));
+    Queue *que = queue_init();
+
+    for (int i = 0; i < 5; ++i) {
+        enqueue(que, i);
     }
+    print_que(que);
 
-    stack_remove_all(stack);
+    dequeue(que);
+    dequeue(que);
+    dequeue(que);
+    dequeue(que);
+    dequeue(que);
+    print_que(que);
 
-    print_stack(stack);
-
-    free_stack(stack);
+//    Stack *stack = stack_init();
+//    for (int i = 0; i < 500; ++i) push(stack, i);
+//    for (int i = 0; i < 450; ++i) pop(stack);
+//    int top = peek(stack);
+//    if(!top) {
+//        printf("Stack is empty!\n");
+//    } else {
+//        printf("Value of top: %d\n", *peek(stack));
+//    }
+//
+//    stack_remove_all(stack);
+//
+//    print_stack(stack);
+//
+//    free_stack(stack);
 
 //    // Create a new linked list.
 //    LinkedList_t *list = malloc(sizeof(LinkedList_t));

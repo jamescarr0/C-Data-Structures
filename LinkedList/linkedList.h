@@ -14,11 +14,14 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
+// Data type the node is working with.
+#define LL_DATA_TYPE char
+
 /**
  * Node Item contains a character value.
  */
 typedef struct node_s {
-    char data;
+    LL_DATA_TYPE data;
     struct node_s *next;
 } node_t;
 

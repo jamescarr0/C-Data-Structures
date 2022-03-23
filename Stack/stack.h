@@ -14,9 +14,12 @@
 #define GROW_STACK 0
 #define SHRINK_STACK 1
 
+// Data type the stack is working with.
+#define STACK_DATA_TYPE int
+
 typedef struct Stack_s {
     int length;
-    int *array;
+    STACK_DATA_TYPE *array;
     int buf_size;
 } Stack;
 
@@ -26,6 +29,11 @@ void push(Stack *stack, int value);
 
 void pop(Stack *stack);
 
+/**
+ * View the top of the stack without popping.
+ * @param stack The stack to peek
+ * @return Pointer to the top of the stack, NULL if stack is empty.
+ */
 int *peek(Stack *stack);
 
 int stack_is_empty(Stack *stack);
