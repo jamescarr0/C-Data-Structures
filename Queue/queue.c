@@ -43,12 +43,13 @@ void print_que(Queue *q) {
     if (q->len) {
         Q_item *p = q->head;
         while (p) {
-            printf("%d%s", p->data, p->next ? " -> " : "");
+            printf("%d%s", p->data, p->next ? " -> " : "\n");
             p = p->next;
         }
+    } else {
+        // Queue has no items.
+        printf("Queue Empty.\n");
     }
-    // Queue has no items.
-    printf("Queue Empty.\n");
 }
 
 Q_item *create_q_item(Q_T data) {
