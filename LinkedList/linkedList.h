@@ -27,10 +27,20 @@ typedef struct node_s {
 
 /**
  * Linked List Type.
+ * @param head pointer to the head node.
+ * @param list_length tracks the length of the linked list so we do not have to traverse the list and count the nodes
+ * to find the size of the list.
  */
 typedef struct LinkedList_s {
     node_t *head;
+    int list_length;
 } LinkedList_t;
+
+/**
+ * Initialise a new linked list
+ * @return pointer to linked list.
+ */
+LinkedList_t *init_list();
 
 /**
  * Insert a node at the end of the list.
@@ -121,12 +131,5 @@ node_t *h_create_node(char value);
  * @return Pointer to the first node found matching the character value.
  */
 node_t *h_find_node(LinkedList_t *list, char value);
-
-/**
- * Helper function to count the number of nodes in a list.
- * @param head Head node of a linked list.
- * @return The number of nodes in the list.
- */
-int h_list_length(node_t *head);  // Helper function
 
 #endif //LINKEDLIST_H

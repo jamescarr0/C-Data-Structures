@@ -11,6 +11,15 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
+LinkedList_t *init_list() {
+    LinkedList_t *p = malloc(sizeof(LinkedList_t));
+    if(!p) {
+        fprintf(stderr, "Memory allocation failed. Terminating.\n");
+        exit(EXIT_FAILURE);
+    }
+    return p;
+}
+
 void insert(LinkedList_t *list, char value) {
     // Pointer-to-pointer tracks the ADDRESS of the current node
     node_t **node_ptr = &list->head;        // Set node_ptr to address of the head (current) node.
@@ -24,17 +33,20 @@ void insert(LinkedList_t *list, char value) {
     // This is the last pointer in the list which would point to NULL.
     // Assign to pointer the address of our new node.
     *node_ptr = new_node;
+    list->list_length++;
 }
 
 void insert_head(LinkedList_t *list, char value) {
     node_t **head_ptr = &list->head;
     node_t *new_node = h_create_node(value);
-
     new_node->next = *head_ptr;     // New node points to the head node.
     *head_ptr = new_node;           // Update the head node pointer to the new nodes address.
+    list->list_length++;
 }
 
 int insert_at(LinkedList_t *list, char value, int index) {
+    int insert_used = 0;    // If insert has been called the list length has been increment.
+
     // Index out of bounds.
     if (index > list_length(list)) {
         return -1;
@@ -43,6 +55,7 @@ int insert_at(LinkedList_t *list, char value, int index) {
     // Index == last item of the list, just insert a new node.
     if (index == list_length(list)) {
         insert(list, value);
+        insert_used = 1;
     }
 
     node_t **current = &list->head;
@@ -56,6 +69,11 @@ int insert_at(LinkedList_t *list, char value, int index) {
     node->next = (*current);
     *current = node;
 
+    if(insert_used==1) goto skip;
+
+    list->list_length++;
+
+    skip:
     return 0;
 }
 
@@ -71,6 +89,7 @@ int delete(LinkedList_t *list, char value) {
     }
     *indirect = node->next;
     free(node);
+    list->list_length--;
 
     return 0;
 }
@@ -83,6 +102,7 @@ int delete_head(LinkedList_t *list) {
     node_t *node = list->head;
     list->head = node->next;
     free(node);
+    list->list_length--;
     return 0;
 }
 
@@ -106,7 +126,7 @@ int is_empty(LinkedList_t *list) {
 }
 
 int list_length(LinkedList_t *list) {
-    return h_list_length(list->head);
+    return list->list_length;
 }
 
 void remove_all(LinkedList_t *list) {
@@ -123,13 +143,6 @@ void remove_all(LinkedList_t *list) {
 void free_list(LinkedList_t *list) {
     remove_all(list);
     free(list);
-}
-
-/*** Helper Functions ***/
-int h_list_length(node_t *head) {
-    // Recursively count the number of nodes in the list.
-    if (!head) return 0;
-    return 1 + h_list_length(head->next);
 }
 
 // Malloc a new node and return the pointer.
