@@ -32,7 +32,7 @@ LinkedList *new_list() {
     return p;
 }
 
-static void LinkedList__insert(LinkedList *list, char value) {
+static void LinkedList__insert(LinkedList *list, LL_DATA_TYPE value) {
     // Pointer-to-pointer tracks the ADDRESS of the current node
     node_t **node_ptr = &list->head;        // Set node_ptr to address of the head (current) node.
     node_t *new_node = __LinkedList__create_node(value);
@@ -48,7 +48,7 @@ static void LinkedList__insert(LinkedList *list, char value) {
     list->list_length++;
 }
 
-void LinkedList__insert_head(LinkedList *list, char value) {
+void LinkedList__insert_head(LinkedList *list, LL_DATA_TYPE value) {
     node_t **head_ptr = &list->head;
     node_t *new_node = __LinkedList__create_node(value);
     new_node->next = *head_ptr;     // New node points to the head node.
@@ -56,7 +56,7 @@ void LinkedList__insert_head(LinkedList *list, char value) {
     list->list_length++;
 }
 
-int LinkedList__insert_at(LinkedList *list, char value, int index) {
+int LinkedList__insert_at(LinkedList *list, LL_DATA_TYPE value, int index) {
     int insert_used = 0;    // If insert has been called the list length has been increment.
 
     // Index out of bounds.
@@ -89,7 +89,7 @@ int LinkedList__insert_at(LinkedList *list, char value, int index) {
     return 0;
 }
 
-int LinkedList__delete(LinkedList *list, char value) {
+int LinkedList__delete(LinkedList *list, LL_DATA_TYPE value) {
     node_t **indirect = &list->head;
     node_t *node = __LinkedList__find_node(list, value);
     if (!node) {
@@ -158,7 +158,7 @@ void LinkedList__free_list(LinkedList *list) {
 }
 
 // Malloc a new node and return the pointer.
-node_t *__LinkedList__create_node(char value) {
+node_t *__LinkedList__create_node(LL_DATA_TYPE value) {
     node_t *new_node = malloc(sizeof(node_t));
     if (!new_node) {
         printf("Error: Memory allocation failed, terminating.\n");
@@ -170,7 +170,7 @@ node_t *__LinkedList__create_node(char value) {
 }
 
 // Find a node entry based on the character value.
-node_t *__LinkedList__find_node(LinkedList *list, char value) {
+node_t *__LinkedList__find_node(LinkedList *list, LL_DATA_TYPE value) {
     node_t *node = list->head;
     while (node != NULL && node->data != value) {
         node = node->next;
