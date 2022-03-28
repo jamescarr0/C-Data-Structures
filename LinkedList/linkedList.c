@@ -11,19 +11,31 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-LinkedList_t *init_list() {
-    LinkedList_t *p = malloc(sizeof(LinkedList_t));
+LinkedList *new_list() {
+    LinkedList *p = malloc(sizeof(LinkedList));
     if(!p) {
         fprintf(stderr, "Memory allocation failed. Terminating.\n");
         exit(EXIT_FAILURE);
     }
+
+    p->insert = &LinkedList__insert;
+    p->insert_at = &LinkedList__insert_at;
+    p->insert_head = &LinkedList__insert_head;
+    p->delete = &LinkedList__delete;
+    p->delete_head = &LinkedList__delete_head;
+    p->is_empty = &LinkedList__is_empty;
+    p->print_list = &LinkedList__print_list;
+    p->length = &LinkedList__list_length;
+    p->remove_all = &LinkedList__remove_all;
+    p->free = &LinkedList__free_list;
+
     return p;
 }
 
-void insert(LinkedList_t *list, char value) {
+static void LinkedList__insert(LinkedList *list, char value) {
     // Pointer-to-pointer tracks the ADDRESS of the current node
     node_t **node_ptr = &list->head;        // Set node_ptr to address of the head (current) node.
-    node_t *new_node = h_create_node(value);
+    node_t *new_node = __LinkedList__create_node(value);
 
     // Iterate the list until we get to the last pointer.
     while (*node_ptr) {
@@ -36,25 +48,25 @@ void insert(LinkedList_t *list, char value) {
     list->list_length++;
 }
 
-void insert_head(LinkedList_t *list, char value) {
+void LinkedList__insert_head(LinkedList *list, char value) {
     node_t **head_ptr = &list->head;
-    node_t *new_node = h_create_node(value);
+    node_t *new_node = __LinkedList__create_node(value);
     new_node->next = *head_ptr;     // New node points to the head node.
     *head_ptr = new_node;           // Update the head node pointer to the new nodes address.
     list->list_length++;
 }
 
-int insert_at(LinkedList_t *list, char value, int index) {
+int LinkedList__insert_at(LinkedList *list, char value, int index) {
     int insert_used = 0;    // If insert has been called the list length has been increment.
 
     // Index out of bounds.
-    if (index > list_length(list)) {
+    if (index > list->length(list)) {
         return -1;
     }
 
     // Index == last item of the list, just insert a new node.
-    if (index == list_length(list)) {
-        insert(list, value);
+    if (index == list->length(list)) {
+        list->insert(list, value);
         insert_used = 1;
     }
 
@@ -65,7 +77,7 @@ int insert_at(LinkedList_t *list, char value, int index) {
         current = &(*current)->next;
     }
 
-    node_t *node = h_create_node(value);
+    node_t *node = __LinkedList__create_node(value);
     node->next = (*current);
     *current = node;
 
@@ -77,9 +89,9 @@ int insert_at(LinkedList_t *list, char value, int index) {
     return 0;
 }
 
-int delete(LinkedList_t *list, char value) {
+int LinkedList__delete(LinkedList *list, char value) {
     node_t **indirect = &list->head;
-    node_t *node = h_find_node(list, value);
+    node_t *node = __LinkedList__find_node(list, value);
     if (!node) {
         return -1;
     }
@@ -94,9 +106,9 @@ int delete(LinkedList_t *list, char value) {
     return 0;
 }
 
-int delete_head(LinkedList_t *list) {
+int LinkedList__delete_head(LinkedList *list) {
     // Cannot remove a head with no nodes / empty list.
-    if (list_length(list) == 0) {
+    if (list->length(list) == 0) {
         return -1;
     }
     node_t *node = list->head;
@@ -106,8 +118,8 @@ int delete_head(LinkedList_t *list) {
     return 0;
 }
 
-void print_list(LinkedList_t *list) {
-    if (is_empty(list)) {
+void LinkedList__print_list(LinkedList *list) {
+    if (list->is_empty(list)) {
         printf("List empty\n");
         return;
     }
@@ -121,15 +133,15 @@ void print_list(LinkedList_t *list) {
     printf("NULL\n");
 }
 
-int is_empty(LinkedList_t *list) {
+int LinkedList__is_empty(LinkedList *list) {
     return list->head == NULL;
 }
 
-int list_length(LinkedList_t *list) {
+int LinkedList__list_length(LinkedList *list) {
     return list->list_length;
 }
 
-void remove_all(LinkedList_t *list) {
+void LinkedList__remove_all(LinkedList *list) {
     node_t *node = NULL;
 
     while (list->head) {
@@ -140,13 +152,13 @@ void remove_all(LinkedList_t *list) {
     list->head = NULL;
 }
 
-void free_list(LinkedList_t *list) {
-    remove_all(list);
+void LinkedList__free_list(LinkedList *list) {
+    list->remove_all(list);
     free(list);
 }
 
 // Malloc a new node and return the pointer.
-node_t *h_create_node(char value) {
+node_t *__LinkedList__create_node(char value) {
     node_t *new_node = malloc(sizeof(node_t));
     if (!new_node) {
         printf("Error: Memory allocation failed, terminating.\n");
@@ -158,7 +170,7 @@ node_t *h_create_node(char value) {
 }
 
 // Find a node entry based on the character value.
-node_t *h_find_node(LinkedList_t *list, char value) {
+node_t *__LinkedList__find_node(LinkedList *list, char value) {
     node_t *node = list->head;
     while (node != NULL && node->data != value) {
         node = node->next;
