@@ -11,7 +11,7 @@
 
 #define Q_T int // Data type que is working with.
 
-typedef struct Q_item_s{
+typedef struct{
     Q_T data;
     struct Q_item_t *next;
 } Q_item;
